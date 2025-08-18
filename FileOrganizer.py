@@ -33,10 +33,27 @@ extensions = {
     ".exe": "Executables",
 }
 
+## Define size categories and their corresponding folder names
+# This dictionary maps size categories to folder names for organization.
+
+size_folders = {
+        "Small": 0,
+        "Medium": 1024 * 1024,  # 1 MB
+        "Large": 10 * 1024 * 1024,  # 10 MB
+        "Huge": 100 * 1024 * 1024,  # 100 MB
+    }
+
 ## Function to organize files by type
 # This function iterates through files in the specified directory and moves them to subfolders based on their file type.
 
 def organizeFilesByType(directory):
+    ##Create folders for each file type if they do not exist
+    for folder_name in set(extensions.values()):
+        folder_path = os.path.join(directory, folder_name)
+        os.makedirs(folder_path, exist_ok=True)
+
+    ## Iterate through files in the directory
+    # and move them to the appropriate subfolder based on their extension.    
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
 
@@ -64,13 +81,13 @@ def organizeFilesByType(directory):
 # This function categorizes files into folders based on their size.
 
 def organizeFilesBySize(directory):
-    size_folders = {
-        "Small": 0,
-        "Medium": 1024 * 1024,  # 1 MB
-        "Large": 10 * 1024 * 1024,  # 10 MB
-        "Huge": 100 * 1024 * 1024,  # 100 MB
-    }
+    ## Create folders for different size categories if they do not exist
+    for folder_name in size_folders.keys():
+        folder_path = os.path.join(directory, folder_name)
+        os.makedirs(folder_path, exist_ok=True)
 
+    ## Iterate through files in the directory
+    # and move them to the appropriate subfolder based on their size.
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
 
@@ -125,6 +142,8 @@ def organizeFilesBySize(directory):
 ## Main function to run the script
 
 def main():
+    ## Prompt user for the folder to organize
+    # Ensure the user provides a valid folder name.
     valid = False
     while valid is False:
         folderChoice = input("Enter the folder to organize (e.g., 'Downloads', 'Documents'): ").strip()
@@ -133,7 +152,9 @@ def main():
             valid = True
         else:
             print("Invalid folder name. Please try again.")
-
+    
+    ## Prompt user for organization choice
+    # Ask the user how they would like to organize their files.
     print("How would you like to organize your files?\n1. By Type\n2. By Size")
     choice = input("Enter 1 or 2: ").strip()
 
