@@ -43,6 +43,10 @@ size_folders = {
         "Huge": 100 * 1024 * 1024,  # 100 MB
     }
 
+## Initialize an empty list for naming conventions
+# This list will be used to store custom naming conventions for file organization.
+folder_names = []
+
 ## Function to organize files by type
 # This function iterates through files in the specified directory and moves them to subfolders based on their file type.
 
@@ -139,6 +143,41 @@ def organizeFilesBySize(directory):
 
     print("File organization by size complete.")
 
+##Function to organize files by naming conventions
+# This function organizes files based on their naming conventions, such as prefixes or patterns.
+
+def organizeFilesByNaming(directory):
+    ## Create folders for custom naming conventions if they do not exist
+    valid = False
+    while not valid:
+        naming_convention = input("Enter a prefix for like files(up to 5 characters):\nType finish to move on. ").strip()
+        if naming_convention and len(naming_convention) <= 5:
+            folder_path = os.path.join(directory, naming_convention)
+            os.makedirs(folder_path, exist_ok=True)
+            folder_names.append(folder_path)
+            print(f"Created folder: {folder_path}")
+        elif naming_convention.lower() == "finish":
+            print("Exiting naming convention organization.")
+            valid = True
+        else:
+            print("Invalid naming convention. Please try again.")
+    
+    ## Iterate through files in the directory
+    # and move them to the appropriate subfolder based on their naming convention.
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        if os.path.isfile(file_path):
+            for folder_path in folder_names:
+                if filename.startswith(os.path.basename(folder_path)):
+                    destination_path = os.path.join(folder_path, filename)
+                    shutil.move(file_path, destination_path)
+                    print(f"Moved: {filename} to {folder_path}")
+                    break
+            else:
+                print(f"Skipped: {filename} (no matching naming convention)")
+
+    print("File organization by naming convention complete.")
+
 ## Main function to run the script
 
 def main():
@@ -155,13 +194,15 @@ def main():
     
     ## Prompt user for organization choice
     # Ask the user how they would like to organize their files.
-    print("How would you like to organize your files?\n1. By Type\n2. By Size")
-    choice = input("Enter 1 or 2: ").strip()
+    print("How would you like to organize your files?\n1. By Type\n2. By Size\n3. By Naming Convention")
+    choice = input("Enter 1, 2, or 3: ").strip()
 
     if choice == "1":
         organizeFilesByType(directory)
     elif choice == "2":
         organizeFilesBySize(directory)
+    elif choice == "3":
+        organizeFilesByNaming(directory)
     else:
         print("Invalid choice. Please enter 1 or 2.")
 
