@@ -6,6 +6,8 @@
 
 import os
 import shutil
+import guizero
+from guizero import Window
 
 ## Define file type extensions and their corresponding folder names
 # This dictionary maps file extensions to folder names for organization.
@@ -178,34 +180,69 @@ def organizeFilesByNaming(directory):
 
     print("File organization by naming convention complete.")
 
+
+
 ## Main function to run the script
 
-def main():
-    ## Prompt user for the folder to organize
-    # Ensure the user provides a valid folder name.
-    valid = False
-    while valid is False:
-        folderChoice = input("Enter the folder to organize (e.g., 'Downloads', 'Documents'): ").strip()
-        if folderChoice:
-            directory = os.path.join(os.path.expanduser("~"), folderChoice)
-            valid = True
-        else:
-            print("Invalid folder name. Please try again.")
+# def main():
+#     ## Prompt user for the folder to organize
+#     # Ensure the user provides a valid folder name.
+#     valid = False
+#     while valid is False:
+#         folderChoice = input("Enter the folder to organize (e.g., 'Downloads', 'Documents'): ").strip()
+#         if folderChoice:
+#             directory = os.path.join(os.path.expanduser("~"), folderChoice)
+#             valid = True
+#         else:
+#             print("Invalid folder name. Please try again.")
     
-    ## Prompt user for organization choice
-    # Ask the user how they would like to organize their files.
-    print("How would you like to organize your files?\n1. By Type\n2. By Size\n3. By Naming Convention")
-    choice = input("Enter 1, 2, or 3: ").strip()
+#     ## Prompt user for organization choice
+#     # Ask the user how they would like to organize their files.
+#     print("How would you like to organize your files?\n1. By Type\n2. By Size\n3. By Naming Convention")
+#     choice = input("Enter 1, 2, or 3: ").strip()
 
-    if choice == "1":
-        organizeFilesByType(directory)
-    elif choice == "2":
-        organizeFilesBySize(directory)
-    elif choice == "3":
-        organizeFilesByNaming(directory)
+#     if choice == "1":
+#         organizeFilesByType(directory)
+#     elif choice == "2":
+#         organizeFilesBySize(directory)
+#     elif choice == "3":
+#         organizeFilesByNaming(directory)
+#     else:
+#         print("Invalid choice. Please enter 1 or 2.")
+
+#     print(f"Organizing files in: {directory}")
+
+## GUI for file organization
+
+# User selection for folder organization
+def open_folder():
+    folder = guizero.select_folder(title="Select Folder to Organize")
+    if folder:
+        folder_path_text.value = (f"Selected folder: {folder}")
     else:
-        print("Invalid choice. Please enter 1 or 2.")
+        print("No folder selected.")
 
-    print(f"Organizing files in: {directory}")
+# Function to assign folder names based on user input
+def folder_name_assignment(name_list):
+    name_list = name_list.split(",")
+    folder_names.clear()  # Clear previous folder names
+    for name in name_list:
+        folder_names.append(name.strip())
 
-main()
+
+# Create the GUI application
+app = guizero.App(title="File Organizer", width=800, height=600)
+# Add a welcome message and button to select the folder
+message = guizero.Text(app, text="Welcome to File Organizer!\nPlease select the folder you want to organize.", size=14)
+folder_select_button = guizero.PushButton(app, text="Organize Files", command=open_folder)
+folder_path_text = guizero.Text(app, text="No folder selected")
+# Add buttons for type and size organization
+organize_by_type_button = guizero.PushButton(app, text="Organize by Type", command=lambda: organizeFilesByType(folder_path_text.value.split(": ")[1]))
+organize_by_size_button = guizero.PushButton(app, text="Organize by Size", command=lambda: organizeFilesBySize(folder_path_text.value.split(": ")[1]))
+# Add text input for custom naming conventions
+custom_name_textbox = guizero.TextBox(app, text="Enter custom naming conventions (up to 5 characters), separated by commas:")
+name_list = custom_name_textbox.value.split(",")
+names_confirm_button = guizero.PushButton(app, text="Confirm Naming Conventions", command=lambda: folder_name_assignment(custom_name_textbox.value))
+# Add button to organize by naming conventions
+organize_by_naming_button = guizero.PushButton(app, text="Organize by Naming Convention", command=lambda: organizeFilesByNaming(folder_path_text.value.split(": ")[1]))
+app.display()
