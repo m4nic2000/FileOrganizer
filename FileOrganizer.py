@@ -1,5 +1,14 @@
+## FileOrganizer.py
+# This script organizes files in a specified directory by type or size.
+# It creates and populates subfolders for different file types and sizes.
+
+##Import necessary libraries
+
 import os
 import shutil
+
+## Define file type extensions and their corresponding folder names
+# This dictionary maps file extensions to folder names for organization.
 
 extensions = {
     ".jpg": "Images",
@@ -24,6 +33,9 @@ extensions = {
     ".exe": "Executables",
 }
 
+## Function to organize files by type
+# This function iterates through files in the specified directory and moves them to subfolders based on their file type.
+
 def organizeFilesByType(directory):
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
@@ -47,6 +59,9 @@ def organizeFilesByType(directory):
             print(f"Skipped: {filename} (it is a directory)")
 
     print("File organization complete.")
+
+## Function to organize files by size
+# This function categorizes files into folders based on their size.
 
 def organizeFilesBySize(directory):
     size_folders = {
@@ -106,6 +121,8 @@ def organizeFilesBySize(directory):
             print(f"Skipped: {filename} (it is a directory)")
 
     print("File organization by size complete.")
+
+## Main function to run the script
 
 def main():
     valid = False
